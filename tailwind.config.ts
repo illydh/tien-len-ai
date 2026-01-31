@@ -57,6 +57,20 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        suit: {
+          red: "hsl(var(--suit-red))",
+          black: "hsl(var(--suit-black))",
+        },
+        player: {
+          you: "hsl(var(--player-you))",
+          ai1: "hsl(var(--player-ai1))",
+          ai2: "hsl(var(--player-ai2))",
+          ai3: "hsl(var(--player-ai3))",
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
