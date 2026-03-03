@@ -48,7 +48,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
                 : `Player ${index + 1} (${id})`}
             </Label>
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={config[id]}
               onChange={(e) =>
                 handleAlgorithmChange(id, e.target.value as AIAlgorithm)
@@ -80,14 +80,10 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
             max="1000"
             value={rounds}
             onChange={(e) => setRounds(Number(e.target.value))}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+            className="flex h-10 w-full rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background"
           />
-          <Button
-            variant="secondary"
-            onClick={() => onSimulate(config, rounds)}
-            className="w-full"
-          >
-            Run Headless Simulation
+          <Button onClick={() => onSimulate(config, rounds)} className="w-full">
+            Run Simulation
           </Button>
         </div>
       </div>
