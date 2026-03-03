@@ -21,10 +21,11 @@ export function PlayingCard({
   const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
   const symbol = SUIT_SYMBOLS[card.suit];
 
+  // Significantly increased sizes for better visibility and "premium" feel
   const sizeClasses = {
-    sm: 'w-10 h-14 text-xs',
-    md: 'w-14 h-20 text-sm',
-    lg: 'w-20 h-28 text-base',
+    sm: 'w-16 h-24 text-sm',
+    md: 'w-24 h-36 text-lg',
+    lg: 'w-32 h-48 text-xl',
   };
 
   if (faceDown) {
@@ -39,7 +40,7 @@ export function PlayingCard({
         )}
       >
         <div className="w-3/4 h-3/4 rounded border-2 border-primary-foreground/30 flex items-center justify-center">
-          <span className="text-primary-foreground/50 font-display text-lg">T</span>
+          <span className="text-primary-foreground/50 font-display text-4xl">T</span>
         </div>
       </div>
     );
@@ -49,7 +50,7 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        'playing-card cursor-pointer flex flex-col p-1.5',
+        'playing-card cursor-pointer flex flex-col justify-between p-2', // Added justify-between and increased padding
         selected && 'selected ring-primary',
         sizeClasses[size],
         className
@@ -58,18 +59,18 @@ export function PlayingCard({
       {/* Top left corner */}
       <div className={cn('flex flex-col items-center leading-none', isRed ? 'suit-red' : 'suit-black')}>
         <span className="font-bold">{card.rank}</span>
-        <span className="text-lg -mt-1">{symbol}</span>
+        <span className="text-current opacity-80">{symbol}</span>
       </div>
       
       {/* Center suit */}
-      <div className={cn('flex-1 flex items-center justify-center', isRed ? 'suit-red' : 'suit-black')}>
-        <span className="text-2xl">{symbol}</span>
+      <div className={cn('absolute inset-0 flex items-center justify-center pointer-events-none', isRed ? 'suit-red' : 'suit-black')}>
+        <span className="text-5xl opacity-20">{symbol}</span>
       </div>
       
       {/* Bottom right corner (upside down) */}
       <div className={cn('flex flex-col items-center leading-none rotate-180', isRed ? 'suit-red' : 'suit-black')}>
         <span className="font-bold">{card.rank}</span>
-        <span className="text-lg -mt-1">{symbol}</span>
+        <span className="text-current opacity-80">{symbol}</span>
       </div>
     </div>
   );

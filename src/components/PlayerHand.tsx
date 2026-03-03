@@ -38,7 +38,7 @@ export function PlayerHand({
   showCards = false,
 }: PlayerHandProps) {
   const isPlayer = playerId === 'player';
-  
+
   const positionClasses = {
     bottom: 'flex-row',
     left: 'flex-col',
@@ -53,7 +53,10 @@ export function PlayerHand({
     right: 'absolute right-4 top-1/2 -translate-y-1/2',
   };
 
-  const cardOverlap = position === 'left' || position === 'right' ? '-my-6' : '-mx-3';
+  const cardOverlap =
+    position === 'bottom' ? '-mx-12' :
+      position === 'top' ? '-mx-8' :
+        '-my-10';
 
   return (
     <div className={cn(containerClasses[position], 'flex flex-col items-center gap-2')}>
