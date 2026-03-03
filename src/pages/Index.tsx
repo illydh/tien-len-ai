@@ -28,13 +28,21 @@ export default function Index() {
   const [simulationConfig, setSimulationConfig] = useState<PlayerConfig | null>(
     null,
   );
+  const [isSimulating, setIsSimulating] = useState(false);
 
   const { players, currentPlay, lastPlayerId, gamePhase, winner } = gameState;
 
-  const handleSimulate = (config: PlayerConfig, rounds: number) => {
-    const result = runHeadlessSimulation(config, rounds);
-    setSimulationResult(result);
-    setSimulationConfig(config);
+  const handleSimulate = async (config: PlayerConfig, rounds: number) => {
+    setIsSimulating(true);
+    // Allow React to render the "Running..." UI
+    await new Promise((r) => setTimeout(r, 10));
+    try {
+      const result = await runHeadlessSimulation(config, rounds);
+      setSimulationResult(result);
+      setSimulationConfig(config);
+    } finally {
+      setIsSimulating(false);
+    }
   };
 
   const handleRestartRound = () => {
@@ -137,7 +145,11 @@ export default function Index() {
       </div>
 
       {gamePhase === "setup" && (
-        <SetupScreen onStartGame={startGame} onSimulate={handleSimulate} />
+        <SetupScreen
+          onStartGame={startGame}
+          onSimulate={handleSimulate}
+          isSimulating={isSimulating}
+        />
       )}
 
       {/* Game table */}

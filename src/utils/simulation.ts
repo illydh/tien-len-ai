@@ -15,10 +15,10 @@ export interface SimulationResult {
   totalGames: number;
 }
 
-export function runHeadlessSimulation(
+export async function runHeadlessSimulation(
   config: PlayerConfig,
   totalGames: number,
-): SimulationResult {
+): Promise<SimulationResult> {
   const result: SimulationResult = {
     wins: { player: 0, ai1: 0, ai2: 0, ai3: 0 },
     totalGames,
@@ -60,11 +60,12 @@ export function runHeadlessSimulation(
           currentPlayer.cards.some(
             (c) => c.rank === "3" && c.suit === "spades",
           );
-        const play = getAIPlayForAlgorithm(
+        const play = await getAIPlayForAlgorithm(
           currentPlayer.algorithm,
           currentPlayer.cards,
           currentPlay,
           mustInclude3S,
+          true,
         );
 
         if (play) {

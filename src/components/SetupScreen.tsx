@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label";
 interface SetupScreenProps {
   onStartGame: (config: PlayerConfig) => void;
   onSimulate: (config: PlayerConfig, rounds: number) => void;
+  isSimulating: boolean;
 }
 
 const ALGORITHMS: { value: AIAlgorithm; label: string }[] = [
   { value: "human", label: "Human" },
   { value: "random", label: "Random Choice" },
   { value: "greedy", label: "Greedy" },
-  { value: "minimax", label: "Minimax (Fast)" },
+  { value: "minimax", label: "Minimax" },
   { value: "q-learning", label: "Q-Learning (Mock)" },
   { value: "reinforcement", label: "Reinforcement (Mock)" },
 ];
@@ -21,6 +22,7 @@ const ALGORITHMS: { value: AIAlgorithm; label: string }[] = [
 export const SetupScreen: React.FC<SetupScreenProps> = ({
   onStartGame,
   onSimulate,
+  isSimulating,
 }) => {
   const [config, setConfig] = useState<PlayerConfig>({
     player: "human",
@@ -82,8 +84,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
             onChange={(e) => setRounds(Number(e.target.value))}
             className="flex h-10 w-full rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background"
           />
-          <Button onClick={() => onSimulate(config, rounds)} className="w-full">
-            Run Simulation
+          <Button
+            onClick={() => onSimulate(config, rounds)}
+            className="w-full"
+            disabled={isSimulating}
+          >
+            {isSimulating ? "Running..." : "Run Simulation"}
           </Button>
         </div>
       </div>

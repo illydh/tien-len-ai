@@ -268,15 +268,17 @@ export function useTienLen() {
     const aiAlgorithm = currentPlayer.algorithm;
 
     const timer = setTimeout(
-      () => {
+      async () => {
         const mustInclude3S =
           isFirstPlay &&
           aiHand.some((c) => c.rank === "3" && c.suit === "spades");
-        const aiCards = getAIPlayForAlgorithm(
+
+        const aiCards = await getAIPlayForAlgorithm(
           aiAlgorithm,
           aiHand,
           gameState.currentPlay,
           mustInclude3S,
+          false,
         );
 
         if (aiCards) {
@@ -285,7 +287,7 @@ export function useTienLen() {
           pass(aiPlayerId);
         }
       },
-      1000 + Math.random() * 500,
+      300 + Math.random() * 200,
     );
 
     return () => clearTimeout(timer);

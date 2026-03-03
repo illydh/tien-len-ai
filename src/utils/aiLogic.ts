@@ -48,14 +48,13 @@ function evaluateHand(hand: Card[]): number {
   return score;
 }
 
-// Shallow Minimax Logic (Depth 1)
-// We look at all valid playing moves, and see which leaves us with the strongest hand.
-// This is practically a 1-move lookahead.
-export function playMinimax(
+export async function playMinimax(
   hand: Card[],
   currentPlay: Combination | null,
   mustIncludeThreeOfSpades: boolean = false,
-): Card[] | null {
+  depth: number = 4,
+  isSimulation: boolean = false,
+): Promise<Card[] | null> {
   const validPlays = getAllValidPlays(
     hand,
     currentPlay,
@@ -64,23 +63,15 @@ export function playMinimax(
   if (validPlays.length === 0) return null;
 
   let bestPlay: Card[] | null = null;
-  // We want to minimize the remaining evaluation score
   let bestScore = Infinity;
 
-  // Option to pass
-  let passScore = evaluateHand(hand);
+  if (!isSimulation) {
+    await new Promise((r) => setTimeout(r, 0));
+  }
 
   for (const play of validPlays) {
-    // Determine what hand looks like after play
     const remainingHand = hand.filter((c) => !play.some((p) => p.id === c.id));
-    let score = evaluateHand(remainingHand);
-
-    // Penalize breaking up strong structure could be done here...
-
-    // If this move wins the game immediately, do it!
-    if (remainingHand.length === 0) {
-      return play;
-    }
+    const score = await getMinimaxScore(remainingHand, depth - 1, isSimulation);
 
     if (score < bestScore) {
       bestScore = score;
@@ -88,14 +79,34 @@ export function playMinimax(
     }
   }
 
-  // Should we pass instead? (Minimax would consider if passing is better than playing, but in Tien Len, playing is generally better unless withholding a 2)
-  if (currentPlay && passScore < bestScore - 100) {
-    // If evaluating that passing is vastly better, we might return null
-    // But for a simple greedy minimax, we prefer playing if possible
-  }
-
-  // If bestPlay is null, just fallback to greedy
   return bestPlay || validPlays[0];
+}
+
+async function getMinimaxScore(
+  hand: Card[],
+  depth: number,
+  isSimulation: boolean,
+): Promise<number> {
+  if (depth === 0 || hand.length === 0) return evaluateHand(hand);
+
+  const validPlays = getAllValidPlays(hand, null, false);
+  if (validPlays.length === 0) return evaluateHand(hand);
+
+  let bestScore = Infinity;
+  for (const play of validPlays) {
+    const remainingHand = hand.filter((c) => !play.some((p) => p.id === c.id));
+
+    // Yield to main thread at upper depths to keep UI responsive
+    if (!isSimulation && depth >= 3) {
+      await new Promise((r) => setTimeout(r, 0));
+    }
+
+    const score = await getMinimaxScore(remainingHand, depth - 1, isSimulation);
+    if (score < bestScore) {
+      bestScore = score;
+    }
+  }
+  return bestScore;
 }
 
 // Mock Q-learning Logic
@@ -173,17 +184,24 @@ export function playReinforcement(
 }
 
 // Main delegator
-export function getAIPlayForAlgorithm(
+export async function getAIPlayForAlgorithm(
   algorithm: string,
   hand: Card[],
   currentPlay: Combination | null,
   mustIncludeThreeOfSpades: boolean = false,
-): Card[] | null {
+  isSimulation: boolean = false,
+): Promise<Card[] | null> {
   switch (algorithm) {
     case "random":
       return playRandom(hand, currentPlay, mustIncludeThreeOfSpades);
     case "minimax":
-      return playMinimax(hand, currentPlay, mustIncludeThreeOfSpades);
+      return await playMinimax(
+        hand,
+        currentPlay,
+        mustIncludeThreeOfSpades,
+        4,
+        isSimulation,
+      );
     case "q-learning":
       return playQLearning(hand, currentPlay, mustIncludeThreeOfSpades);
     case "reinforcement":
