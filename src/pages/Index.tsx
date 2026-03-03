@@ -174,20 +174,20 @@ export default function Index() {
               passed={players[3].passed}
               position="right"
             />
-          </div>
 
-          {/* Game controls - only show if player 0 is human */}
-          {players[0].algorithm === "human" && (
-            <GameControls
-              selectedCards={selectedCards}
-              currentPlay={currentPlay}
-              isPlayerTurn={isPlayerTurn}
-              onPlay={playerPlay}
-              onPass={playerPass}
-              onClear={clearSelection}
-              canPass={canPass}
-            />
-          )}
+            {/* Game controls - only show if player 0 is human */}
+            {players[0].algorithm === "human" && (
+              <GameControls
+                selectedCards={selectedCards}
+                currentPlay={currentPlay}
+                isPlayerTurn={isPlayerTurn}
+                onPlay={playerPlay}
+                onPass={playerPass}
+                onClear={clearSelection}
+                canPass={canPass}
+              />
+            )}
+          </div>
 
           {/* Restart button for bot-only games when stuck or finished */}
           {players[0].algorithm !== "human" && (
