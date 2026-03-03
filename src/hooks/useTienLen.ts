@@ -14,6 +14,7 @@ import {
   findStartingPlayer,
   identifyCombination,
   canBeat,
+  getAllValidPlays,
 } from "@/utils/gameLogic";
 import { getAIPlayForAlgorithm } from "@/utils/aiLogic";
 
@@ -305,6 +306,24 @@ export function useTienLen() {
   // Check if player can pass (can't pass if starting new round)
   const canPass = gameState.currentPlay !== null;
 
+  // Check if the current player has any valid plays
+  const hasValidPlay = isPlayerTurn
+    ? (() => {
+        const mustInclude3S =
+          isFirstPlay &&
+          currentPlayer.cards.some(
+            (c) => c.rank === "3" && c.suit === "spades",
+          );
+        return (
+          getAllValidPlays(
+            currentPlayer.cards,
+            gameState.currentPlay,
+            mustInclude3S,
+          ).length > 0
+        );
+      })()
+    : true;
+
   return {
     gameState,
     selectedCards,
@@ -314,6 +333,7 @@ export function useTienLen() {
     playerPlay,
     playerPass,
     canPass,
+    hasValidPlay,
     startGame,
     newGame,
     playCards,

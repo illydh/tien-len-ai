@@ -11,6 +11,7 @@ interface GameControlsProps {
   onPass: () => void;
   onClear: () => void;
   canPass: boolean;
+  hasValidPlay: boolean;
 }
 
 export function GameControls({
@@ -21,6 +22,7 @@ export function GameControls({
   onPass,
   onClear,
   canPass,
+  hasValidPlay,
 }: GameControlsProps) {
   const combination = identifyCombination(selectedCards);
   const isValidPlay = combination && canBeat(combination, currentPlay);
@@ -36,43 +38,56 @@ export function GameControls({
   }
 
   return (
-    <div className="absolute bottom-56 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
-      {selectedCards.length > 0 && (
-        <Button
-          variant="outline"
-          onClick={onClear}
-          className="bg-secondary/80 backdrop-blur-sm border-border hover:bg-secondary"
-        >
-          Clear ({selectedCards.length})
-        </Button>
+    <div className="absolute bottom-56 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3">
+      {/* Subtle indicator message when no valid plays remain */}
+      {!hasValidPlay && canPass && (
+        <div className="text-sm font-medium text-destructive/90 bg-destructive/10 px-3 py-1 rounded-full animate-pulse transition-opacity">
+          No valid plays. You must pass.
+        </div>
       )}
 
-      {canPass && (
-        <Button
-          variant="outline"
-          onClick={onPass}
-          className="bg-secondary/80 backdrop-blur-sm border-border hover:bg-secondary"
-        >
-          Pass
-        </Button>
-      )}
-
-      <Button
-        onClick={onPlay}
-        disabled={!isValidPlay}
-        className={cn(
-          "px-8 py-6 text-lg font-semibold",
-          isValidPlay
-            ? "bg-primary hover:bg-primary/90 text-primary-foreground glow-gold"
-            : "bg-muted text-muted-foreground",
+      <div className="flex items-center gap-3">
+        {selectedCards.length > 0 && (
+          <Button
+            variant="outline"
+            onClick={onClear}
+            className="bg-secondary/80 backdrop-blur-sm border-border hover:bg-secondary"
+          >
+            Clear ({selectedCards.length})
+          </Button>
         )}
-      >
-        {!combination && selectedCards.length > 0
-          ? "Invalid Combination"
-          : isValidPlay
-            ? `Play ${combination?.type.replace("-", " ")}!`
-            : "Select Cards"}
-      </Button>
+
+        {canPass && (
+          <Button
+            variant="outline"
+            onClick={onPass}
+            className={cn(
+              "bg-secondary/80 backdrop-blur-sm border-border hover:bg-secondary",
+              !hasValidPlay &&
+                "ring-2 ring-destructive ring-offset-2 ring-offset-background",
+            )}
+          >
+            Pass
+          </Button>
+        )}
+
+        <Button
+          onClick={onPlay}
+          disabled={!isValidPlay}
+          className={cn(
+            "px-8 py-6 text-lg font-semibold",
+            isValidPlay
+              ? "bg-primary hover:bg-primary/90 text-primary-foreground glow-gold"
+              : "bg-muted text-muted-foreground",
+          )}
+        >
+          {!combination && selectedCards.length > 0
+            ? "Invalid Combination"
+            : isValidPlay
+              ? `Play ${combination?.type.replace("-", " ")}!`
+              : "Select Cards"}
+        </Button>
+      </div>
     </div>
   );
 }

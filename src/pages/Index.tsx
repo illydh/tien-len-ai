@@ -18,6 +18,7 @@ export default function Index() {
     playerPlay,
     playerPass,
     canPass,
+    hasValidPlay,
     startGame,
     newGame,
   } = useTienLen();
@@ -199,6 +200,7 @@ export default function Index() {
                 onPass={playerPass}
                 onClear={clearSelection}
                 canPass={canPass}
+                hasValidPlay={hasValidPlay}
               />
             )}
           </div>
