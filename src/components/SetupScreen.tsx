@@ -8,6 +8,7 @@ interface SetupScreenProps {
   onStartGame: (config: PlayerConfig) => void;
   onSimulate: (config: PlayerConfig, rounds: number) => void;
   isSimulating: boolean;
+  initialConfig: PlayerConfig;
 }
 
 const ALGORITHMS: { value: AIAlgorithm; label: string }[] = [
@@ -23,13 +24,9 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
   onStartGame,
   onSimulate,
   isSimulating,
+  initialConfig,
 }) => {
-  const [config, setConfig] = useState<PlayerConfig>({
-    player: "human",
-    ai1: "greedy",
-    ai2: "random",
-    ai3: "minimax",
-  });
+  const [config, setConfig] = useState<PlayerConfig>(initialConfig);
 
   const [rounds, setRounds] = useState(10);
 

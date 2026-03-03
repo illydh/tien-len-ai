@@ -149,6 +149,12 @@ export default function Index() {
           onStartGame={startGame}
           onSimulate={handleSimulate}
           isSimulating={isSimulating}
+          initialConfig={{
+            player: players[0].algorithm,
+            ai1: players[1].algorithm,
+            ai2: players[2].algorithm,
+            ai3: players[3].algorithm,
+          }}
         />
       )}
 

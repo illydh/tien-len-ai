@@ -36,13 +36,20 @@ export function useTienLen() {
   const [selectedCards, setSelectedCards] = useState<Card[]>([]);
   const [isFirstPlay, setIsFirstPlay] = useState(true);
 
-  function createInitialState(): GameState {
+  function createInitialState(prevConfig?: PlayerConfig): GameState {
+    const defaultAlgorithms: PlayerConfig = prevConfig || {
+      player: "human",
+      ai1: "greedy",
+      ai2: "random",
+      ai3: "minimax",
+    };
+
     const players: Player[] = PLAYER_IDS.map((id) => ({
       id,
       name: PLAYER_NAMES[id],
       cards: [],
       passed: false,
-      algorithm: id === "player" ? "human" : "greedy",
+      algorithm: defaultAlgorithms[id],
     }));
 
     return {
@@ -302,7 +309,15 @@ export function useTienLen() {
   ]);
 
   const newGame = useCallback(() => {
-    setGameState(createInitialState());
+    setGameState((prev) => {
+      const config: PlayerConfig = {
+        player: prev.players[0].algorithm,
+        ai1: prev.players[1].algorithm,
+        ai2: prev.players[2].algorithm,
+        ai3: prev.players[3].algorithm,
+      };
+      return createInitialState(config);
+    });
   }, []);
 
   // Check if player can pass (can't pass if starting new round)
