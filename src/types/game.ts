@@ -39,6 +39,7 @@ export interface Player {
   cards: Card[];
   passed: boolean;
   algorithm: AIAlgorithm;
+  isBurned?: boolean;
 }
 
 export type CombinationType =

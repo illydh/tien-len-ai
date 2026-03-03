@@ -41,6 +41,7 @@ export function runHeadlessSimulation(
       name: id,
       cards: hands[index],
       passed: false,
+      isBurned: false,
       algorithm: config[id] === "human" ? "random" : config[id], // Sub human with random
     }));
 
@@ -75,40 +76,48 @@ export function runHeadlessSimulation(
               (c) => !play.some((p) => p.id === c.id),
             );
             lastPlayerId = currentPlayer.id;
-            passCount = 0;
             isFirstPlay = false;
 
-            // Reset passed states
-            players.forEach((p) => (p.passed = false));
-
             if (currentPlayer.cards.length === 0) {
+              players.forEach((p) => {
+                if (p.cards.length === 13) p.isBurned = true;
+              });
               winner = currentPlayer.id;
               break;
             }
           } else {
             // AI decided to play an invalid move? Just pass instead as fallback
             currentPlayer.passed = true;
-            passCount++;
           }
         } else {
           // AI passed
           currentPlayer.passed = true;
-          passCount++;
         }
       }
 
-      // Handle pass reset
-      if (passCount >= 3) {
+      // Handle trick ending
+      const activeInTrickCount = players.filter(
+        (p) => !p.passed && p.cards.length > 0 && !p.isBurned,
+      ).length;
+      if (activeInTrickCount <= 1) {
         currentPlay = null;
-        passCount = 0;
         players.forEach((p) => (p.passed = false));
-        currentPlayerIndex = players.findIndex((p) => p.id === lastPlayerId);
+        let nextStarterIndex = players.findIndex((p) => p.id === lastPlayerId);
+
+        while (
+          players[nextStarterIndex].cards.length === 0 ||
+          players[nextStarterIndex].isBurned
+        ) {
+          nextStarterIndex = (nextStarterIndex + 1) % 4;
+        }
+        currentPlayerIndex = nextStarterIndex;
       } else {
         // Move to next player
         let nextIndex = (currentPlayerIndex + 1) % 4;
         while (
-          players[nextIndex].passed &&
-          players[nextIndex].cards.length > 0
+          players[nextIndex].passed ||
+          players[nextIndex].cards.length === 0 ||
+          players[nextIndex].isBurned
         ) {
           nextIndex = (nextIndex + 1) % 4;
         }

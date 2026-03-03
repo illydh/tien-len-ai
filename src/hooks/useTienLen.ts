@@ -116,17 +116,45 @@ export function useTienLen() {
         ),
       };
 
-      // Reset passed status for all players when new cards are played
-      newPlayers.forEach((p) => (p.passed = false));
+      // Handle burning players (if someone finishes, anyone with 13 cards is burned)
+      if (newPlayers[playerIndex].cards.length === 0) {
+        newPlayers.forEach((p, idx) => {
+          if (p.cards.length === 13) {
+            newPlayers[idx] = { ...p, isBurned: true };
+          }
+        });
+      }
 
-      // Check for winner
+      // Check for finished players
+      const finishedCount = newPlayers.filter(
+        (p) => p.cards.length === 0 || p.isBurned,
+      ).length;
+      const isGameOver = finishedCount >= 3;
+
       const winner =
-        newPlayers[playerIndex].cards.length === 0 ? playerId : null;
+        prev.winner ||
+        (newPlayers[playerIndex].cards.length === 0 ? playerId : null);
+
+      if (isGameOver) {
+        return {
+          ...prev,
+          players: newPlayers,
+          currentPlay: combination,
+          lastPlayerId: playerId,
+          gamePhase: "finished",
+          winner,
+        };
+      }
 
       // Move to next player
       let nextIndex = (playerIndex + 1) % 4;
-      while (newPlayers[nextIndex].cards.length === 0 && !winner) {
+      while (
+        newPlayers[nextIndex].passed ||
+        newPlayers[nextIndex].cards.length === 0 ||
+        newPlayers[nextIndex].isBurned
+      ) {
         nextIndex = (nextIndex + 1) % 4;
+        if (nextIndex === playerIndex) break; // Defensive
       }
 
       setIsFirstPlay(false);
@@ -138,7 +166,7 @@ export function useTienLen() {
         currentPlay: combination,
         lastPlayerId: playerId,
         passCount: 0,
-        gamePhase: winner ? "finished" : "playing",
+        gamePhase: "playing",
         winner,
       };
     });
@@ -169,14 +197,26 @@ export function useTienLen() {
       const newPlayers = [...prev.players];
       newPlayers[playerIndex] = { ...newPlayers[playerIndex], passed: true };
 
-      const newPassCount = prev.passCount + 1;
+      const activeInTrick = newPlayers.filter(
+        (p) => !p.passed && p.cards.length > 0 && !p.isBurned,
+      );
 
-      // If 3 players passed, current play wins and they start new round
-      if (newPassCount >= 3) {
+      // If trick ends, current play wins and they start new round
+      if (activeInTrick.length <= 1) {
         // Find the player who made the last play
         const lastPlayerIndex = prev.players.findIndex(
           (p) => p.id === prev.lastPlayerId,
         );
+
+        let nextStarterIndex = lastPlayerIndex;
+        // If the winner of the trick is out of cards, next person with cards starts
+        while (
+          newPlayers[nextStarterIndex].cards.length === 0 ||
+          newPlayers[nextStarterIndex].isBurned
+        ) {
+          nextStarterIndex = (nextStarterIndex + 1) % 4;
+          if (nextStarterIndex === lastPlayerIndex) break; // Defensive
+        }
 
         // Reset all passed states
         newPlayers.forEach((p) => (p.passed = false));
@@ -184,10 +224,10 @@ export function useTienLen() {
         return {
           ...prev,
           players: newPlayers,
-          currentPlayerIndex: lastPlayerIndex,
+          currentPlayerIndex: nextStarterIndex,
           currentPlay: null,
           passCount: 0,
-          roundStarter: prev.lastPlayerId,
+          roundStarter: newPlayers[nextStarterIndex].id,
         };
       }
 
@@ -195,17 +235,18 @@ export function useTienLen() {
       let nextIndex = (playerIndex + 1) % 4;
       while (
         newPlayers[nextIndex].passed ||
-        newPlayers[nextIndex].cards.length === 0
+        newPlayers[nextIndex].cards.length === 0 ||
+        newPlayers[nextIndex].isBurned
       ) {
         nextIndex = (nextIndex + 1) % 4;
-        if (nextIndex === playerIndex) break;
+        if (nextIndex === playerIndex) break; // Defensive
       }
 
       return {
         ...prev,
         players: newPlayers,
         currentPlayerIndex: nextIndex,
-        passCount: newPassCount,
+        passCount: prev.passCount + 1,
       };
     });
   }, []);

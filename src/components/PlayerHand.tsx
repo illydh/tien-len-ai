@@ -11,6 +11,7 @@ interface PlayerHandProps {
   passed: boolean;
   position: "bottom" | "left" | "top" | "right";
   showCards?: boolean;
+  isBurned?: boolean;
 }
 
 const PLAYER_NAMES: Record<PlayerId, string> = {
@@ -36,6 +37,7 @@ export function PlayerHand({
   passed,
   position,
   showCards = false,
+  isBurned = false,
 }: PlayerHandProps) {
   const isPlayer = playerId === "player";
 
@@ -75,11 +77,15 @@ export function PlayerHand({
       >
         <span className="font-medium">{PLAYER_NAMES[playerId]}</span>
         <span className="text-xs opacity-80">({cards.length})</span>
-        {passed && (
+        {isBurned ? (
+          <span className="text-xs bg-red-500/80 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+            Burned
+          </span>
+        ) : passed ? (
           <span className="text-xs bg-black/20 px-1.5 py-0.5 rounded">
             Passed
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* Cards */}

@@ -36,6 +36,16 @@ export default function Index() {
     setSimulationConfig(config);
   };
 
+  const handleRestartRound = () => {
+    const config: PlayerConfig = {
+      player: players[0].algorithm,
+      ai1: players[1].algorithm,
+      ai2: players[2].algorithm,
+      ai3: players[3].algorithm,
+    };
+    startGame(config);
+  };
+
   if (simulationResult && simulationConfig) {
     return (
       <div className="min-h-screen table-felt flex flex-col items-center justify-center p-4">
@@ -144,6 +154,7 @@ export default function Index() {
               onCardClick={toggleCardSelection}
               isCurrentTurn={gameState.currentPlayerIndex === 0}
               passed={players[0].passed}
+              isBurned={players[0].isBurned}
               position="bottom"
               showCards={players[0].algorithm === "human"}
             />
@@ -154,6 +165,7 @@ export default function Index() {
               selectedCards={[]}
               isCurrentTurn={gameState.currentPlayerIndex === 1}
               passed={players[1].passed}
+              isBurned={players[1].isBurned}
               position="left"
             />
 
@@ -163,6 +175,7 @@ export default function Index() {
               selectedCards={[]}
               isCurrentTurn={gameState.currentPlayerIndex === 2}
               passed={players[2].passed}
+              isBurned={players[2].isBurned}
               position="top"
             />
 
@@ -172,6 +185,7 @@ export default function Index() {
               selectedCards={[]}
               isCurrentTurn={gameState.currentPlayerIndex === 3}
               passed={players[3].passed}
+              isBurned={players[3].isBurned}
               position="right"
             />
 
@@ -205,7 +219,11 @@ export default function Index() {
 
           {/* Game over modal */}
           {gamePhase === "finished" && winner && (
-            <GameOverModal winner={winner} onNewGame={newGame} />
+            <GameOverModal
+              winner={winner}
+              onNewGame={handleRestartRound}
+              onBackToSetup={newGame}
+            />
           )}
         </>
       )}
