@@ -24,15 +24,19 @@ export default function Index() {
 
   const [simulationResult, setSimulationResult] =
     useState<SimulationResult | null>(null);
+  const [simulationConfig, setSimulationConfig] = useState<PlayerConfig | null>(
+    null,
+  );
 
   const { players, currentPlay, lastPlayerId, gamePhase, winner } = gameState;
 
   const handleSimulate = (config: PlayerConfig, rounds: number) => {
     const result = runHeadlessSimulation(config, rounds);
     setSimulationResult(result);
+    setSimulationConfig(config);
   };
 
-  if (simulationResult) {
+  if (simulationResult && simulationConfig) {
     return (
       <div className="min-h-screen table-felt flex flex-col items-center justify-center p-4">
         <div className="bg-card text-card-foreground p-8 rounded-lg shadow-xl w-full max-w-md relative z-10 border border-border">
@@ -45,7 +49,13 @@ export default function Index() {
             </p>
             <div className="space-y-2">
               <div className="flex justify-between border-b border-border pb-1">
-                <span>Player 1 (Bottom):</span>
+                <span className="capitalize">
+                  Player 1 (
+                  {simulationConfig.player === "human"
+                    ? "random"
+                    : simulationConfig.player}
+                  ):
+                </span>
                 <span className="font-mono">
                   {(
                     (simulationResult.wins.player /
@@ -56,7 +66,9 @@ export default function Index() {
                 </span>
               </div>
               <div className="flex justify-between border-b border-border pb-1">
-                <span>Player 2 (Left):</span>
+                <span className="capitalize">
+                  Player 2 ({simulationConfig.ai1}):
+                </span>
                 <span className="font-mono">
                   {(
                     (simulationResult.wins.ai1 / simulationResult.totalGames) *
@@ -66,7 +78,9 @@ export default function Index() {
                 </span>
               </div>
               <div className="flex justify-between border-b border-border pb-1">
-                <span>Player 3 (Top):</span>
+                <span className="capitalize">
+                  Player 3 ({simulationConfig.ai2}):
+                </span>
                 <span className="font-mono">
                   {(
                     (simulationResult.wins.ai2 / simulationResult.totalGames) *
@@ -76,7 +90,9 @@ export default function Index() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Player 4 (Right):</span>
+                <span className="capitalize">
+                  Player 4 ({simulationConfig.ai3}):
+                </span>
                 <span className="font-mono">
                   {(
                     (simulationResult.wins.ai3 / simulationResult.totalGames) *
@@ -87,7 +103,13 @@ export default function Index() {
               </div>
             </div>
           </div>
-          <Button onClick={() => setSimulationResult(null)} className="w-full">
+          <Button
+            onClick={() => {
+              setSimulationResult(null);
+              setSimulationConfig(null);
+            }}
+            className="w-full"
+          >
             Back to Setup
           </Button>
         </div>
