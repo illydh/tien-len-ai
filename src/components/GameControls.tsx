@@ -29,7 +29,7 @@ export function GameControls({
 
   if (!isPlayerTurn) {
     return (
-      <div className="absolute bottom-56 left-1/2 -translate-x-1/2 z-20">
+      <div className="absolute bottom-60 left-1/2 -translate-x-1/2 z-20">
         <div className="px-6 py-3 bg-secondary/80 backdrop-blur-sm rounded-full text-muted-foreground">
           Waiting for other players...
         </div>
@@ -38,10 +38,10 @@ export function GameControls({
   }
 
   return (
-    <div className="absolute bottom-56 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3">
+    <div className="absolute bottom-60 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
       {/* Subtle indicator message when no valid plays remain */}
       {!hasValidPlay && canPass && (
-        <div className="text-sm font-medium text-destructive/90 bg-destructive/10 px-3 py-1 rounded-full animate-pulse transition-opacity">
+        <div className="absolute top-full mt-4 text-sm font-medium text-destructive/90 bg-destructive/10 px-3 py-1 rounded-full animate-pulse transition-opacity whitespace-nowrap pointer-events-none">
           No valid plays. You must pass.
         </div>
       )}
