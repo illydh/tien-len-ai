@@ -2,6 +2,8 @@
 
 Tiến Lên AI is a web-based implementation of the popular Vietnamese card game **Tiến Lên** (Vietnamese Poker), built with React, TypeScript, Tailwind CSS, and Vite.
 
+[**Play Live Demo**](https://tien-len-ai.vercel.app/)
+
 This project goes beyond just playing the game—it serves as a playground for testing and evaluating different artificial intelligence algorithms to see which strategies perform best.
 
 ## Features
@@ -27,6 +29,8 @@ This project goes beyond just playing the game—it serves as a playground for t
 - **Lucide Icons**
 
 ## Getting Started
+
+The easiest way to play is via the [live demo](https://tien-len-ai.vercel.app/). To run the project locally, follow the steps below.
 
 ### Prerequisites
 
